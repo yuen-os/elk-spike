@@ -1,3 +1,7 @@
+spring:
+    application:
+      name: elk-spike
+
 #logging:
 #  file:
-#    name: C:/Users/y.yalung/Desktop/log_dump/elk-stack.log
+#    name: C:/Users/y.yalung/Desktop/logback/spring-boot-logging.log

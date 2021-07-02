@@ -12,12 +12,30 @@
             <maxHistory>7</maxHistory>
             <!-- adding max file size-->
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>5KB</maxFileSize>
+                <maxFileSize>5MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
 
         </rollingPolicy>
 
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+        <!--https://www.elastic.co/guide/en/ecs-logging/java/1.x/setup.html-->
+        <encoder class="co.elastic.logging.logback.EcsEncoder">
+            <serviceName>elk-spike</serviceName>
+            <stackTraceAsArray>true</stackTraceAsArray>
+            <includeOrigin>true</includeOrigin>
+            <includeMarkers>true</includeMarkers>
+
+            <!--adding additional static field-->
+            <additionalField>
+                <key>key1</key>
+                <value>value1</value>
+            </additionalField>
+            <additionalField>
+                <key>key2</key>
+                <value>value2</value>
+            </additionalField>
+
+
+        </encoder>
     </appender>
 
 
