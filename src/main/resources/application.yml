@@ -1,0 +1,3 @@
+#logging:
+#  file:
+#    name: C:/Users/y.yalung/Desktop/log_dump/elk-stack.log
