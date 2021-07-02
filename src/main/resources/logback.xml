@@ -5,12 +5,22 @@
 
     <appender name="STASH" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>C:/Users/y.yalung/Desktop/logback/spring-boot-logging.log</file>
+
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logback/spring-boot-logging.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>C:/Users/y.yalung/Desktop/logback/spring-boot-logging.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- adding retention period-->
             <maxHistory>7</maxHistory>
+            <!-- adding max file size-->
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>5KB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+
         </rollingPolicy>
+
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
+
+
     <root level="DEBUG">
         <appender-ref ref="STASH" />
     </root>
