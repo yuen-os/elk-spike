@@ -3,11 +3,32 @@
 
     <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />
 
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="co.elastic.logging.logback.EcsEncoder">
+                <serviceName>elk-spike</serviceName>
+                <stackTraceAsArray>true</stackTraceAsArray>
+                <includeOrigin>true</includeOrigin>
+                <includeMarkers>true</includeMarkers>
+
+                <!--adding additional static field-->
+                <additionalField>
+                    <key>key1</key>
+                    <value>value1</value>
+                </additionalField>
+                <additionalField>
+                    <key>key2</key>
+                    <value>value2</value>
+                </additionalField>
+
+
+            </encoder>
+    </appender>
+
     <appender name="STASH" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>C:/Users/y.yalung/Desktop/logback/spring-boot-logging.log</file>
+        <file>/logs/spring-boot-logging.log</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>C:/Users/y.yalung/Desktop/logback/spring-boot-logging.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>/logs/spring-boot-logging.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <!-- adding retention period-->
             <maxHistory>7</maxHistory>
             <!-- adding max file size-->
@@ -41,5 +62,6 @@
 
     <root level="DEBUG">
         <appender-ref ref="STASH" />
+<!--        <appender-ref ref="CONSOLE" />-->
     </root>
 </configuration>
