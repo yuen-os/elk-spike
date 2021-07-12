@@ -50,7 +50,6 @@ public class LoggerAspect {
         String currentSource = joinPoint.getTarget().getClass().getSimpleName() + "."
                 + joinPoint.getSignature().getName();
 
-
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
 
         Map<String, Object> params = this.extractMethodArgs(joinPoint, methodSignature);

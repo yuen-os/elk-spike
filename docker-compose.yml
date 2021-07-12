@@ -1,0 +1,19 @@
+
+networks:
+  elk-spike-dev-network-v1:
+    driver: bridge
+
+services:
+
+  elasticsearch:
+    image: elasticsearch:7.13.2
+    container_name: elk-spike-elasticsearch-dev-v1
+    ports:
+      - 9200:9200
+      - 9300:9300
+    restart: always
+    environment:
+      discovery.type: single-node
+
+    networks:
+        - elk-spike-dev-network-v1
