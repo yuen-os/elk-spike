@@ -4,14 +4,17 @@ import com.elk.spike.elkspike.exception.HandledServiceException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.ObjectMessage;
+import org.apache.logging.log4j.message.StringMapMessage;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Component;
@@ -19,7 +22,6 @@ import org.springframework.stereotype.Component;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -27,7 +29,8 @@ import java.util.Objects;
 @Aspect
 public class LoggerAspect {
 
-    Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger logger = LogManager.getLogger(LoggerAspect.class);
+    private final String ECS_PREFIX = "yyy.";
 
     @Autowired
     private ObjectMapper mapper;
@@ -47,19 +50,21 @@ public class LoggerAspect {
     @Description("build logs for throwing error")
     private void errorLogBuilder(JoinPoint joinPoint, Throwable ex) throws Throwable {
 
+
+
         String currentSource = joinPoint.getTarget().getClass().getSimpleName() + "."
                 + joinPoint.getSignature().getName();
 
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
 
         Map<String, Object> params = this.extractMethodArgs(joinPoint, methodSignature);
-        params.put("source", currentSource );
-        params.put("stackTrace", ExceptionUtils.getStackTrace(ex).replaceAll("\\s+", " ") );
+        params.put(ECS_PREFIX.concat("source"), currentSource );
+        params.put(ECS_PREFIX.concat("stackTrace"), ExceptionUtils.getStackTrace(ex).replaceAll("\\s+", " ") );
 
         if(ex instanceof HandledServiceException){
-            logger.debug("{}", mapper.writeValueAsString(params));
+            logger.debug( new ObjectMessage(params));
         }else{
-            logger.error("{}", mapper.writeValueAsString(params));
+            logger.error( new ObjectMessage(params));
         }
 
     }
@@ -79,7 +84,7 @@ public class LoggerAspect {
 
             String paramName = parameterNames[i];
             Object value = args[i];
-            params.put(paramName,  Objects.nonNull(value) && value.getClass().getPackage().getName().startsWith("java.lang") ? value : null );
+            params.put(ECS_PREFIX.concat("methodArgs.").concat(paramName),  Objects.nonNull(value) && value.getClass().getPackage().getName().startsWith("java.lang") ? value : null );
         }
         return params;
     }
@@ -96,12 +101,11 @@ public class LoggerAspect {
         MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
 
         Map processInfoMap = this.extractMethodArgs(pjp, methodSignature);
-        processInfoMap.put("source", currentSource);
+        processInfoMap.put(ECS_PREFIX.concat("source"), currentSource);
         long elapsedTime = System.currentTimeMillis() - start;
-        processInfoMap.put("processTime", elapsedTime);
+        processInfoMap.put(ECS_PREFIX.concat("processTime"), elapsedTime);
 
-        logger.info("{}",  mapper.writeValueAsString(processInfoMap));
-
+        logger.info(new ObjectMessage(processInfoMap));
         return pjp.proceed();
     }
 }

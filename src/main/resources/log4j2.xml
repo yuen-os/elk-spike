@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG">
+    <Appenders>
+        <Console name="LogToConsole" target="SYSTEM_OUT">
+            <EcsLayout serviceName="elk-spike" serviceNodeName="elk-spike-cluster-node"/>
+        </Console>
+
+
+        <RollingFile name="LogToFile" fileName="/logs/spring-boot-logging.log"
+                     filePattern="/logs/spring-boot-logging-%d{yyyy-MM-dd}-%i.log">
+
+            <EcsLayout serviceName="elk-spike" serviceNodeName="elk-spike-cluster-node"/>
+
+            <Policies>
+                <!-- specifies the frequency of rollover (days) -->
+                <TimeBasedTriggeringPolicy interval="1" />
+            </Policies>
+
+            <!-- maximum number of log files that will be kept -->
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+    </Appenders>
+    <Loggers>
+        <Root level="debug">
+            <AppenderRef ref="LogToFile"/>
+            <AppenderRef ref="LogToConsole"/>
+        </Root>
+    </Loggers>
+</Configuration>

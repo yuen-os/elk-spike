@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Description;
 
 import java.text.SimpleDateFormat;
 
-public class JacksonConfig {
+public class JacksonConfig{
 
     @Bean
     @Description("source: https://www.concretepage.com/jackson-api/jackson-jsonfilter-example")
